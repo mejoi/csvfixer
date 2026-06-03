@@ -13,7 +13,7 @@ export default function Home() {
   const [headers, setHeaders] = useState<string[]>([]);
   const [rows, setRows] = useState<CSVRow[]>([]);
   const [previewRows, setPreviewRows] = useState<CSVRow[]>([]);
-  const [status, setStatus] = useState<string>("等待上传文件...");
+  const [status, setStatus] = useState<string>("Awaiting file upload...");
 
   const [mapTitle, setMapTitle] = useState<string>("");
   const [mapPrice, setMapPrice] = useState<string>("");
@@ -25,7 +25,7 @@ export default function Home() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    setStatus("正在解析 CSV 文件...");
+    setStatus("Parsing CSV file...");
 
     Papa.parse<CSVRow>(file, {
       header: true,
@@ -58,21 +58,21 @@ export default function Home() {
           setIsLocked(results.data.length > 5);
 
           setStatus(
-            `✅ 成功加载 ${results.data.length} 行数据，请确认字段映射。`
+            `✅ Successfully loaded ${results.data.length} rows. Please review the column mapping.`
           );
         } else {
-          setStatus("❌ CSV 文件内容为空。");
+          setStatus("❌ CSV file is empty.");
         }
       },
       error: (err: Error) => {
-        setStatus(`❌ 解析错误: ${err.message}`);
+        setStatus(`❌ Parsing error: ${err.message}`);
       },
     });
   };
 
   const handleTransform = () => {
     if (!mapTitle || !mapPrice) {
-      alert("请至少选择【标题】和【价格】列。");
+      alert("Please select at least the Title and Price columns.");
       return;
     }
 
@@ -96,7 +96,7 @@ export default function Home() {
 
     setRows(transformed);
     setPreviewRows(transformed.slice(0, 3));
-    setStatus("🎉 转换完成！请在下方预览并下载。");
+    setStatus("🎉 Transformation completed! Preview your results below.");
   };
 
   const downloadCSV = () => {
@@ -138,10 +138,13 @@ export default function Home() {
             color: "#1a1a1a",
           }}
         >
-          Shopify CSV 价格修复
+          Shopify CSV Converter
         </h1>
         <p style={{ margin: "0 0 20px 0", color: "#888", fontSize: 14 }}>
           {status}
+        </p>
+        <p style={{ margin: "0 0 20px 0", color: "#666", fontSize: 14 }}>
+          Automatically convert supplier CSV files into Shopify-ready product data.
         </p>
 
         {/* Step 1: Upload */}
@@ -155,7 +158,7 @@ export default function Home() {
           }}
         >
           <h3 style={{ margin: "0 0 10px 0", fontSize: 15, fontWeight: 600 }}>
-            📁 上传 CSV
+            📁 Upload CSV
           </h3>
           <input
             type="file"
@@ -179,7 +182,7 @@ export default function Home() {
             <h3
               style={{ margin: "0 0 14px 0", fontSize: 15, fontWeight: 600 }}
             >
-              🔗 字段映射
+              🔗 Column Mapping
             </h3>
 
             <div style={{ marginBottom: 12 }}>
@@ -192,14 +195,14 @@ export default function Home() {
                   color: "#333",
                 }}
               >
-                商品标题 (Title) *
+                Product Title *
               </label>
               <select
                 value={mapTitle}
                 onChange={(e) => setMapTitle(e.target.value)}
                 style={selectStyle}
               >
-                <option value="">-- 请选择对应列 --</option>
+                <option value="">-- Select Column --</option>
                 {headers.map((h) => (
                   <option key={h} value={h}>
                     {h}
@@ -218,14 +221,14 @@ export default function Home() {
                   color: "#333",
                 }}
               >
-                原始价格 (Price) *
+                Original Price *
               </label>
               <select
                 value={mapPrice}
                 onChange={(e) => setMapPrice(e.target.value)}
                 style={selectStyle}
               >
-                <option value="">-- 请选择对应列 --</option>
+                <option value="">-- Select Column --</option>
                 {headers.map((h) => (
                   <option key={h} value={h}>
                     {h}
@@ -244,14 +247,14 @@ export default function Home() {
                   color: "#333",
                 }}
               >
-                链接标识 (Handle) · 选填
+                Product Handle (Optional)
               </label>
               <select
                 value={mapHandle}
                 onChange={(e) => setMapHandle(e.target.value)}
                 style={selectStyle}
               >
-                <option value="">-- 请选择对应列（可不选）--</option>
+                <option value="">-- Optional --</option>
                 {headers.map((h) => (
                   <option key={h} value={h}>
                     {h}
@@ -261,7 +264,7 @@ export default function Home() {
             </div>
 
             <button onClick={handleTransform} style={btnPrimary}>
-              开始批量加价转换
+              Generate Shopify CSV
             </button>
           </div>
         )}
@@ -279,15 +282,15 @@ export default function Home() {
             <h3
               style={{ margin: "0 0 12px 0", fontSize: 15, fontWeight: 600 }}
             >
-              ✅ 转换结果预览
+              ✅ Preview Results
             </h3>
 
             <table style={tableStyle}>
               <thead>
                 <tr>
                   <th style={thStyle}>Handle</th>
-                  <th style={thStyle}>标题</th>
-                  <th style={thStyle}>新价格</th>
+                  <th style={thStyle}>Title</th>
+                  <th style={thStyle}>New Price</th>
                 </tr>
               </thead>
               <tbody>
@@ -319,8 +322,8 @@ export default function Home() {
               }
             >
               {isLocked
-                ? "🔒 升级 Pro 解锁下载"
-                : "⬇ 免费下载修改后的 CSV"}
+                ? "🔒 Upgrade to Pro to Download"
+                : "⬇ Download Shopify CSV"}
             </button>
 
             {isLocked && (
@@ -331,7 +334,7 @@ export default function Home() {
                   fontSize: 12,
                 }}
               >
-                ⚠️ 超过 5 行数据仅支持在线预览，请订阅 Pro 版解锁无限导出。
+                ⚠️ Files with more than 5 products can only be previewed in the free version. Upgrade to Pro for unlimited exports.
               </p>
             )}
           </div>
